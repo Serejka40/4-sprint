@@ -43,11 +43,27 @@ func parseTraining(data string) (int, string, time.Duration, error) {
 }
 
 func distance(steps int, height float64) float64 {
-	// TODO: реализовать функцию
+	// Рассчитайте длину шага. Для этого умножьте высоту пользователя на коэффициент длины шага stepLengthCoefficient.
+	// Соответствующая константа уже определена в пакете.
+	// умножьте пройденное количество шагов на длину шага.
+	// разделите полученное значение на число метров в километре (mInKm, константа определена в пакете).
+	distance := (float64(steps) * (height * stepLengthCoefficient)) / float64(mInKm)
+	return distance
+
 }
 
 func meanSpeed(steps int, height float64, duration time.Duration) float64 {
-	// TODO: реализовать функцию
+	// Проверить, что продолжительность duration больше 0. Если это не так, вернуть 0.
+	if duration <= 0 {
+		fmt.Println("Ошибка: продолжительность не больше 0")
+		return 0
+	}
+	// Вычислить дистанцию с помощью distance().
+	distance := distance(steps, height)
+	// Вычислить и вернуть среднюю скорость. Для этого разделите дистанцию на продолжительность в часах.
+	// Чтобы перевести продолжительность в часы, воспользуйтесь функцией из пакета time.
+	averageSpeed := distance / duration.Hours()
+	return averageSpeed
 }
 
 func TrainingInfo(data string, weight, height float64) (string, error) {
