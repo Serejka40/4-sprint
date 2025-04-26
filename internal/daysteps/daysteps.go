@@ -33,7 +33,7 @@ func parsePackage(data string) (int, time.Duration, error) {
 	// Преобразовать второй элемент слайса в time.Duration. В пакете time есть метод для парсинга строки в time.Duration.
 	// Обработать возможные ошибки. При их возникновении из функции вернуть 0 шагов, 0 продолжительность и ошибку.
 	duration, err := time.ParseDuration(dataSl[1])
-	if err != 0 {
+	if err != nil {
 		return 0, 0, fmt.Errorf("ошибка преобразования продолжительности")
 	}
 	// Если всё прошло без ошибок, верните количество шагов, продолжительность и nil (для ошибки).
@@ -41,6 +41,7 @@ func parsePackage(data string) (int, time.Duration, error) {
 }
 
 func DayActionInfo(data string, weight, height float64) string {
+
 	// Получить данные о количестве шагов и продолжительности прогулки с помощью функции parsePackage().
 	// В случае возникновения ошибки вывести её на экран и вернуть пустую строку.
 	steps, duration, err := parsePackage(data)
@@ -48,18 +49,24 @@ func DayActionInfo(data string, weight, height float64) string {
 		fmt.Println("Ошибка:", err)
 		return ""
 	}
+
 	// Проверить, чтобы количество шагов было больше 0. В противном случае вернуть пустую строку.
 	if steps <= 0 {
 		fmt.Println("Ошибка: шагов не больше 0")
 		return ""
 	}
+
 	// Вычислить дистанцию в метрах. Дистанция равна произведению количества шагов на длину шага.
 	// Константа stepLength (длина шага) уже определена в коде.
 	distance := float64(steps) * stepLength / float64(mInKm)
+
+	// Вычислить количество калорий, потраченных на прогулке.
+	// Функция для вычисления калорий WalkingSpentCalories() будет определена в пакете spentcalories, которую вы тоже реализуете.
 	calories, err := WalkingSpentCalories(steps, weight, height, duration)
 	if err != nil {
 		fmt.Println("Ошибка:", err)
 		return ""
 	}
+	// Сформировать строку, которую будете возвращать, пример которой был представлен выше.
 	return fmt.Sprintf("Количество шагов: %d.\nДистанция составила %.2f км.\nВы сожгли %.2f ккал.", steps, distance, calories)
 }
