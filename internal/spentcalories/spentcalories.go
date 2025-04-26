@@ -88,10 +88,28 @@ func RunningSpentCalories(steps int, weight, height float64, duration time.Durat
 	// Рассчитать среднюю скорость с помощью meanSpeed().
 	averageSpeed := meanSpeed(steps, height, duration)
 	// Рассчитать и вернуть количество калорий.
-	calories := (weight * averageSpeed * duration.Minutes()) / 60
+	calories := (weight * averageSpeed * duration.Minutes()) / float64(minInH)
 	return calories, nil
 }
 
 func WalkingSpentCalories(steps int, weight, height float64, duration time.Duration) (float64, error) {
-	// TODO: реализовать функцию
+	// Проверить входные параметры на корректность. Если параметры некорректны, вернуть 0 калорий и соответствующую ошибку.
+	if steps <= 0 {
+		return 0, fmt.Errorf("некорректное количество шагов: %d (требуется > 0)", steps)
+	}
+	if weight <= 0 {
+		return 0, fmt.Errorf("некорректный вес: %.1f кг (требуется > 0)", weight)
+	}
+	if height <= 0 {
+		return 0, fmt.Errorf("некорректный рост: %.2f м (требуется > 0)", height)
+	}
+	if duration <= 0 {
+		return 0, fmt.Errorf("некорректная продолжительность: %v (требуется > 0)", duration)
+	}
+	// Рассчитать среднюю скорость с помощью meanSpeed().
+	averageSpeed := meanSpeed(steps, height, duration)
+	// Рассчитать и вернуть количество калорий.
+	calories := (weight * averageSpeed * duration.Minutes()) / float64(minInH)
+	calories *= walkingCaloriesCoefficient
+	return calories, nil
 }
