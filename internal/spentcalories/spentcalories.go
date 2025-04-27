@@ -55,7 +55,7 @@ func distance(steps int, height float64) float64 {
 func meanSpeed(steps int, height float64, duration time.Duration) float64 {
 	// Проверить, что продолжительность duration больше 0. Если это не так, вернуть 0.
 	if duration <= 0 {
-		fmt.Println("Ошибка: продолжительность не больше 0")
+		fmt.Println("ошибка: продолжительность не больше 0")
 		return 0
 	}
 	// Вычислить дистанцию с помощью distance().
@@ -67,8 +67,37 @@ func meanSpeed(steps int, height float64, duration time.Duration) float64 {
 }
 
 func TrainingInfo(data string, weight, height float64) (string, error) {
-	//
-
+	// Получить значения из строки данных с помощью функции parseTraining(), обработать возможные ошибки.
+	steps, training, duration, err := parseTraining(data)
+	if err != nil {
+		return "", fmt.Errorf("ошибка получения значений из строки: %w", err)
+	}
+	// Проверить, какой вид тренировки был передан в строке, которую парсили (лучше использовать switch).
+	// Для каждого из видов тренировки рассчитать дистанцию, среднюю скорость и калории.
+	switch {
+	case training == "Ходьба":
+		durationInHours := duration.Hours()
+		distance := distance(steps, height)
+		averageSpeed := meanSpeed(steps, height, duration)
+		walkingSpentCalories, err := WalkingSpentCalories(steps, weight, height, duration)
+		if err != nil {
+			return "", fmt.Errorf("ошибка вычисления калорий при ходьбе: %v", err)
+		}
+		return fmt.Sprintf("Тип тренировки: %v \nДлительность: %.2f ч.\nДистанция: %.2f км.\nСкорость: %.2f км/ч.\nСожгли калорий: %.2f.",
+			training, durationInHours, distance, averageSpeed, walkingSpentCalories), nil
+	case training == "Бег":
+		durationInHours := duration.Hours()
+		distance := distance(steps, height)
+		averageSpeed := meanSpeed(steps, height, duration)
+		runningSpentCalories, err := RunningSpentCalories(steps, weight, height, duration)
+		if err != nil {
+			return "", fmt.Errorf("ошибка вычисления калорий при беге: %v", err)
+		}
+		return fmt.Sprintf("Тип тренировки: %v \nДлительность: %.2f ч.\nДистанция: %.2f км.\nСкорость: %.2f км/ч.\nСожгли калорий: %.2f.",
+			training, durationInHours, distance, averageSpeed, runningSpentCalories), nil
+	default:
+		return "", fmt.Errorf("неизвестный тип тренировки: %s", training)
+	}
 }
 
 func RunningSpentCalories(steps int, weight, height float64, duration time.Duration) (float64, error) {
