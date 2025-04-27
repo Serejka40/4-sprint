@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/Yandex-Practicum/tracker/internal/spentcalories"
 )
 
 const (
@@ -46,13 +48,13 @@ func DayActionInfo(data string, weight, height float64) string {
 	// В случае возникновения ошибки вывести её на экран и вернуть пустую строку.
 	steps, duration, err := parsePackage(data)
 	if err != nil {
-		fmt.Println("Ошибка:", err)
+		fmt.Println("ошибка:", err)
 		return ""
 	}
 
 	// Проверить, чтобы количество шагов было больше 0. В противном случае вернуть пустую строку.
 	if steps <= 0 {
-		fmt.Println("Ошибка: шагов не больше 0")
+		fmt.Println("ошибка: шагов не больше 0")
 		return ""
 	}
 
@@ -62,7 +64,7 @@ func DayActionInfo(data string, weight, height float64) string {
 
 	// Вычислить количество калорий, потраченных на прогулке.
 	// Функция для вычисления калорий WalkingSpentCalories() будет определена в пакете spentcalories, которую вы тоже реализуете.
-	calories, err := WalkingSpentCalories(steps, weight, height, duration)
+	calories, err := spentcalories.WalkingSpentCalories(steps, weight, height, duration)
 	if err != nil {
 		fmt.Println("Ошибка:", err)
 		return ""
