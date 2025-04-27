@@ -29,17 +29,20 @@ func parseTraining(data string) (int, string, time.Duration, error) {
 	if err != nil {
 		return 0, "", 0, fmt.Errorf("ошибка преобразования шагов")
 	}
-	if steps == 0 {
-		return 0, "", 0, fmt.Errorf("ошибка: 0 шагов")
+	if steps <= 0 {
+		return 0, "", 0, fmt.Errorf("шагов должно быть больше 0")
 	}
 	// Преобразовать третий элемент слайса в time.Duration. В пакете time есть метод для парсинга строки в time.Duration.
 	// Обработать возможные ошибки. При их возникновении из функции вернуть 0 шагов, 0 продолжительность и ошибку.
-	duration, err := time.ParseDuration(dataSl[3])
+	duration, err := time.ParseDuration(dataSl[2])
 	if err != nil {
 		return 0, "", 0, fmt.Errorf("ошибка преобразования продолжительности")
 	}
+	if duration <= 0 {
+		return 0, "", 0, fmt.Errorf("продолжительность должна быть больше 0")
+	}
 	// Если всё прошло без ошибок, верните количество шагов, продолжительность и nil (для ошибки).
-	return steps, dataSl[2], duration, nil
+	return steps, dataSl[1], duration, nil
 }
 
 func distance(steps int, height float64) float64 {
@@ -83,7 +86,7 @@ func TrainingInfo(data string, weight, height float64) (string, error) {
 		if err != nil {
 			return "", fmt.Errorf("ошибка вычисления калорий при ходьбе: %v", err)
 		}
-		return fmt.Sprintf("Тип тренировки: %v \nДлительность: %.2f ч.\nДистанция: %.2f км.\nСкорость: %.2f км/ч.\nСожгли калорий: %.2f.",
+		return fmt.Sprintf("Тип тренировки: %v\nДлительность: %.2f ч.\nДистанция: %.2f км.\nСкорость: %.2f км/ч\nСожгли калорий: %.2f\n",
 			training, durationInHours, distance, averageSpeed, walkingSpentCalories), nil
 	case training == "Бег":
 		durationInHours := duration.Hours()
@@ -93,7 +96,7 @@ func TrainingInfo(data string, weight, height float64) (string, error) {
 		if err != nil {
 			return "", fmt.Errorf("ошибка вычисления калорий при беге: %v", err)
 		}
-		return fmt.Sprintf("Тип тренировки: %v \nДлительность: %.2f ч.\nДистанция: %.2f км.\nСкорость: %.2f км/ч.\nСожгли калорий: %.2f.",
+		return fmt.Sprintf("Тип тренировки: %v\nДлительность: %.2f ч.\nДистанция: %.2f км.\nСкорость: %.2f км/ч\nСожгли калорий: %.2f\n",
 			training, durationInHours, distance, averageSpeed, runningSpentCalories), nil
 	default:
 		return "", fmt.Errorf("неизвестный тип тренировки: %s", training)
